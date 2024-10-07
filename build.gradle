@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'war'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.db'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'mysql:mysql-connector-java:8.0.32'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// 내장 톰켓 제거
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+apply plugin:'war'
+bootWar{
+	archiveBaseName = 'dogbook'
+	archiveFileName = 'backend.war'
+	archiveVersion = "0.0.0"
+}
