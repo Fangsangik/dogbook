@@ -3,13 +3,19 @@ package com.db.dogbook.book.service;
 import com.db.dogbook.book.dto.bookDto.BookConverter;
 import com.db.dogbook.book.dto.bookDto.BookDto;
 import com.db.dogbook.book.model.Book;
+import com.db.dogbook.book.model.QBook;
 import com.db.dogbook.book.repository.BookRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -20,6 +26,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final LikeCountService likeCountService;
     private final BookConverter bookConverter;
+    private final JPAQueryFactory queryFactory;
 
 
     //List?? Page??
@@ -88,6 +95,8 @@ public class BookService {
             Book updatedBook = bookRepository.findById(bookDto.getId())
                     .orElseThrow(() -> new RuntimeException("Book not found with ID: " + bookDto.getId()));
 
+            //더티체킹
+            //생성자를 이용한 값 설정 or 빌더 패턴 적용
             updatedBook.setBookName(bookDto.getBookName());
             updatedBook.setAuthor(bookDto.getAuthor());
             updatedBook.setPrice(bookDto.getPrice());
