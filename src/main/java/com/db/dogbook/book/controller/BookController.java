@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/book") // RESTful API 경로
 @RequiredArgsConstructor
@@ -50,6 +52,14 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error retrieving books: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/books/search")
+    public List<BookDto> search(
+            @RequestParam(required = false) String bookName,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice) {
+        return bookService.findBooksByPriceRange(bookName, minPrice, maxPrice);
     }
 
     // POST: 책을 업로드
