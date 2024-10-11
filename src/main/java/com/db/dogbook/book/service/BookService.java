@@ -125,7 +125,34 @@ public class BookService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<BookDto> findBooksByPriceRange(String bookName, Integer minPrice, Integer maxPrice) {
 
+        QBook book = QBook.book;
+        //동적쿼리를 작성할때 사용되는 클래스
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (bookName != null) {
+            builder.and(book.bookName.containsIgnoreCase(bookName));
+        }
+
+        if (minPrice != null) {
+            builder.and(book.price.goe(minPrice));
+        }
+
+        if (maxPrice != null) {
+            builder.and(book.price.loe(maxPrice));
+        }
+
+        List<Book> books = queryFactory
+                .selectFrom(book)
+                .where(builder)
+                .fetch();
+
+        return books.stream()
+                .map(bookConverter::toBookEntity)
+                .collect(Collectors.toList());
+    }
 
     private static void validationOfBook(BookDto bookDto) {
         if (bookDto.getId() == null) {
