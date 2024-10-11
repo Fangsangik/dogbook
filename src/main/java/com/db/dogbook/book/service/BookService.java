@@ -158,5 +158,12 @@ public class BookService {
         if (bookDto.getId() == null) {
             throw new IllegalArgumentException("Book ID cannot be null");
         }
+        if (bookDto.getBookName() == null || bookDto.getBookName().isEmpty()) {
+            throw new IllegalArgumentException("Book name cannot be null or empty");
+        }
+
+        if (bookDto.getPrice() <= 0) {
+            throw new IllegalArgumentException("Book price must be greater than zero");
+        }
     }
 }
