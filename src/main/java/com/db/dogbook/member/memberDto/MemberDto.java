@@ -1,4 +1,4 @@
-package com.db.dogbook.book.dto.memberDto;
+package com.db.dogbook.member.memberDto;
 
 import lombok.Builder;
 import lombok.Data;

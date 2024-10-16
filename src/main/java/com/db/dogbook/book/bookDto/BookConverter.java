@@ -1,6 +1,7 @@
-package com.db.dogbook.book.dto.bookDto;
+package com.db.dogbook.book.bookDto;
 
 import com.db.dogbook.book.model.Book;
+import com.db.dogbook.type.Category;
 import org.springframework.stereotype.Component;
 
 @Component

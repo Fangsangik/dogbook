@@ -1,6 +1,6 @@
-package com.db.dogbook.book.dto.memberDto;
+package com.db.dogbook.member.memberDto;
 
-import com.db.dogbook.book.model.Member;
+import com.db.dogbook.member.domain.Member;
 import org.springframework.stereotype.Component;
 
 @Component

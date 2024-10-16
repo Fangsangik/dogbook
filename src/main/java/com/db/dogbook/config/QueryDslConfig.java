@@ -1,4 +1,4 @@
-package com.db.dogbook.book.config;
+package com.db.dogbook.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

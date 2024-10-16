@@ -1,6 +1,6 @@
 package com.db.dogbook.book.controller;
 
-import com.db.dogbook.book.dto.bookDto.BookDto;
+import com.db.dogbook.book.bookDto.BookDto;
 import com.db.dogbook.book.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

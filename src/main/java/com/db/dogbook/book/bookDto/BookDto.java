@@ -1,6 +1,7 @@
-package com.db.dogbook.book.dto.bookDto;
+package com.db.dogbook.book.bookDto;
 
 
+import com.db.dogbook.type.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class BookDto {
     private String thumb;
     private int userId;
     private int likeCnt;
-    private String category;
+    private Category category;
     //??
     private int blockAd;
 

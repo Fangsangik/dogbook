@@ -1,6 +1,6 @@
-package com.db.dogbook.book.repository.memberRepository;
+package com.db.dogbook.member.repository;
 
-import com.db.dogbook.book.model.Member;
+import com.db.dogbook.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {

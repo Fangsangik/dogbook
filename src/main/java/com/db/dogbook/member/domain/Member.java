@@ -1,4 +1,4 @@
-package com.db.dogbook.book.model;
+package com.db.dogbook.member.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +19,7 @@ import java.util.Objects;
 public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String userId;
     private String password;
     private int age;

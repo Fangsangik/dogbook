@@ -1,10 +1,8 @@
 package com.db.dogbook.book.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.db.dogbook.type.Category;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,16 +24,19 @@ public class Book {
     private int price;
     private String author;
 
-    //??
+    //file table
     private int fileIdx;
 
+    //썸네일
     private String thumb;
     private int userId;
     private int likeCnt;
 
-    //상속으로 풀 예정
-    private String category;
+    //Enumtype
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
+    //차단
     private boolean blockYn;
 
     private LocalDateTime blockDt;

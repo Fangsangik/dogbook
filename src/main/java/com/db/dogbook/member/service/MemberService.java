@@ -1,15 +1,13 @@
-package com.db.dogbook.book.service;
+package com.db.dogbook.member.service;
 
-import com.db.dogbook.book.dto.memberDto.MemberConverter;
-import com.db.dogbook.book.dto.memberDto.MemberDto;
-import com.db.dogbook.book.model.Member;
-import com.db.dogbook.book.repository.memberRepository.MemberRepository;
+import com.db.dogbook.member.domain.Member;
+import com.db.dogbook.member.memberDto.MemberConverter;
+import com.db.dogbook.member.memberDto.MemberDto;
+import com.db.dogbook.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
