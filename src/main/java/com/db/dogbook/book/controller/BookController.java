@@ -62,6 +62,14 @@ public class BookController {
         return bookService.findBooksByPriceRange(bookName, minPrice, maxPrice);
     }
 
+    @GetMapping("/category/books")
+    public List<BookDto> findByCategoryAndSubCategory(
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String subCategoryName
+    ) {
+        return bookService.findByCategoryAndSubCategory(categoryName, subCategoryName);
+    }
+
     // POST: 책을 업로드
     @PostMapping("/uploadBook")
     public ResponseEntity<?> uploadBook(@RequestBody BookDto bookDto) {
