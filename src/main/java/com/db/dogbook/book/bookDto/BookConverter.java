@@ -45,12 +45,54 @@ public class BookConverter {
                 .bookName(book.getBookName())
                 .author(book.getAuthor())
                 .price(book.getPrice())
-                .blockDt(book.getBlockDt())
-                .category(book.getCategory())
-                .thumb(book.getThumb())
-                .likeCnt(book.getLikeCnt())
-                .fileIdx(book.getFileIdx())
-                .saveDt(book.getSaveDt())
+                .categoryDto(categoryConverter.toCategoryDto(book.getCategory()))
+                .bookSubCategoryDtos(bookSubCategoryDtos) // 서브 카테고리 DTO 설정
+                .build();
+    }
+
+
+    // BookDto -> Book 변환
+    public Book toBook(BookDto bookDto) {
+        // Book 엔티티를 변환하기 위해 BookSubCategory 리스트를 생성
+        List<BookSubCategory> bookSubCategories = new ArrayList<>(); // 변환된 BookSubCategory 리스트
+
+        // bookDto의 BookSubCategoryDto 리스트를 반복하면서 각 BookSubCategoryDto를 BookSubCategory로 변환
+        for (BookSubCategoryDto bookSubCategoryDto : bookDto.getBookSubCategoryDtos()) {
+            SubCategory subCategory = null;
+
+            // BookSubCategoryDto에 SubCategoryDto가 존재하면, 이를 SubCategory 엔티티로 변환
+            if (bookSubCategoryDto.getSubCategoryDto() != null) {
+                subCategory = subCategoryConverter.toSubCategory(bookSubCategoryDto.getSubCategoryDto());
+            }
+
+            // BookSubCategoryDto를 BookSubCategory로 변환
+            BookSubCategory bookSubCategory = bookSubCategoryConverter.toBookSubCategory(bookSubCategoryDto, subCategory);
+
+            // 변환된 BookSubCategory를 리스트에 추가
+            bookSubCategories.add(bookSubCategory);
+        }
+
+        // CategoryDto가 존재하면, 이를 Category 엔티티로 변환
+        Category category = null;
+        if (bookDto.getCategoryDto() != null) {
+            category = categoryConverter.toCategory(bookDto.getCategoryDto());
+        }
+
+        return Book.builder()
+                .id(bookDto.getId())
+                .bookName(bookDto.getBookName())
+                .author(bookDto.getAuthor())
+                .price(bookDto.getPrice())
+                .fileIdx(bookDto.getFileIdx())
+                .thumb(bookDto.getThumb())
+                .userId(bookDto.getUserId())
+                .likeCnt(bookDto.getLikeCnt())
+                .category(category)
+                .bookSubCategories(bookSubCategories)
+                .blockYn(bookDto.isBlockYn())
+                .blockDt(bookDto.getBlockDt())
+                .saveDt(bookDto.getSaveDt())
+                .updtDt(bookDto.getUpdtDt())
                 .build();
     }
 }
