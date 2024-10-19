@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,6 +17,8 @@ import com.querydsl.core.types.Path;
 public class QBook extends EntityPathBase<Book> {
 
     private static final long serialVersionUID = -2066246617L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QBook book = new QBook("book");
 
@@ -27,7 +30,9 @@ public class QBook extends EntityPathBase<Book> {
 
     public final StringPath bookName = createString("bookName");
 
-    public final StringPath category = createString("category");
+    public final ListPath<com.db.dogbook.category.domain.BookSubCategory, com.db.dogbook.category.domain.QBookSubCategory> bookSubCategories = this.<com.db.dogbook.category.domain.BookSubCategory, com.db.dogbook.category.domain.QBookSubCategory>createList("bookSubCategories", com.db.dogbook.category.domain.BookSubCategory.class, com.db.dogbook.category.domain.QBookSubCategory.class, PathInits.DIRECT2);
+
+    public final com.db.dogbook.category.domain.QCategory category;
 
     public final NumberPath<Integer> fileIdx = createNumber("fileIdx", Integer.class);
 
@@ -46,15 +51,24 @@ public class QBook extends EntityPathBase<Book> {
     public final NumberPath<Integer> userId = createNumber("userId", Integer.class);
 
     public QBook(String variable) {
-        super(Book.class, forVariable(variable));
+        this(Book.class, forVariable(variable), INITS);
     }
 
     public QBook(Path<? extends Book> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QBook(PathMetadata metadata) {
-        super(Book.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QBook(PathMetadata metadata, PathInits inits) {
+        this(Book.class, metadata, inits);
+    }
+
+    public QBook(Class<? extends Book> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.category = inits.isInitialized("category") ? new com.db.dogbook.category.domain.QCategory(forProperty("category")) : null;
     }
 
 }

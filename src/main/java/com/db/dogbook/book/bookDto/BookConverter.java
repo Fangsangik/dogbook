@@ -1,8 +1,17 @@
 package com.db.dogbook.book.bookDto;
 
 import com.db.dogbook.book.model.Book;
-import com.db.dogbook.type.Category;
+import com.db.dogbook.category.categoryDto.BookSubCategoryDto;
+import com.db.dogbook.category.converter.BookSubCategoryConverter;
+import com.db.dogbook.category.converter.CategoryConverter;
+import com.db.dogbook.category.converter.SubCategoryConverter;
+import com.db.dogbook.category.domain.BookSubCategory;
+import com.db.dogbook.category.domain.Category;
+import com.db.dogbook.category.domain.SubCategory;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class BookConverter {
@@ -12,32 +21,19 @@ public class BookConverter {
     private final SubCategoryConverter subCategoryConverter;
 
     public BookConverter(CategoryConverter categoryConverter, BookSubCategoryConverter bookSubCategoryConverter
-            , SubCategoryConverter subCategoryConverter) {
+    ,SubCategoryConverter subCategoryConverter) {
         this.categoryConverter = categoryConverter;
         this.bookSubCategoryConverter = bookSubCategoryConverter;
         this.subCategoryConverter = subCategoryConverter;
     }
 
-    // Book -> BookDto 변환
     public BookDto toBookDto(Book book) {
-        // Book 엔티티의 BookSubCategory 리스트를 가져와서 이를 BookSubCategoryDto로 변환
-        List<BookSubCategoryDto> bookSubCategoryDtos = new ArrayList<>(); // 변환된 BookSubCategoryDto 리스트
-
-        // 기존 Book 엔티티에서 BookSubCategory 리스트를 반복하면서 BookSubCategoryDto로 변환
-        for (BookSubCategory bookSubCategory : book.getBookSubCategories()) {
-            // 각 BookSubCategory 객체를 BookSubCategoryDto 객체로 변환
-            SubCategoryDto subCategoryDto = SubCategoryDto.builder()
-                    .id(bookSubCategory.getSubCategory().getId()) // SubCategory의 ID 설정
-                    .subCategoryName(bookSubCategory.getSubCategory().getSubCategoryName()) // SubCategory의 이름 설정
-                    .build(); // SubCategoryDto 완성
-
-            // BookSubCategoryDto 생성
-            BookSubCategoryDto bookSubCategoryDto = BookSubCategoryDto.builder()
-                    .subCategoryDto(subCategoryDto) // 변환된 SubCategoryDto 설정
-                    .build(); // BookSubCategoryDto 완성
-
-            // 변환된 BookSubCategoryDto를 리스트에 추가
-            bookSubCategoryDtos.add(bookSubCategoryDto);
+        List<BookSubCategoryDto> bookSubCategoryDtos = new ArrayList<>();
+        if (book.getBookSubCategories() != null) {
+            for (BookSubCategory bookSubCategory : book.getBookSubCategories()) {
+                BookSubCategoryDto bookSubCategoryDto = bookSubCategoryConverter.toBookSubCategoryDto(bookSubCategory);
+                bookSubCategoryDtos.add(bookSubCategoryDto);
+            }
         }
 
         return BookDto.builder()
@@ -45,54 +41,55 @@ public class BookConverter {
                 .bookName(book.getBookName())
                 .author(book.getAuthor())
                 .price(book.getPrice())
+                .fileIdx(book.getFileIdx())
+                .thumb(book.getThumb())
+                .userId(book.getUserId())
+                .likeCnt(book.getLikeCnt())
                 .categoryDto(categoryConverter.toCategoryDto(book.getCategory()))
-                .bookSubCategoryDtos(bookSubCategoryDtos) // 서브 카테고리 DTO 설정
+                .bookSubCategoryDtos(bookSubCategoryDtos)
+                .blockYn(book.isBlockYn())
+                .blockDt(book.getBlockDt())
+                .saveDt(book.getSaveDt())
+                .updtDt(book.getUpdtDt())
                 .build();
     }
 
-
-    // BookDto -> Book 변환
     public Book toBook(BookDto bookDto) {
-        // Book 엔티티를 변환하기 위해 BookSubCategory 리스트를 생성
-        List<BookSubCategory> bookSubCategories = new ArrayList<>(); // 변환된 BookSubCategory 리스트
-
-        // bookDto의 BookSubCategoryDto 리스트를 반복하면서 각 BookSubCategoryDto를 BookSubCategory로 변환
-        for (BookSubCategoryDto bookSubCategoryDto : bookDto.getBookSubCategoryDtos()) {
-            SubCategory subCategory = null;
-
-            // BookSubCategoryDto에 SubCategoryDto가 존재하면, 이를 SubCategory 엔티티로 변환
-            if (bookSubCategoryDto.getSubCategoryDto() != null) {
-                subCategory = subCategoryConverter.toSubCategory(bookSubCategoryDto.getSubCategoryDto());
-            }
-
-            // BookSubCategoryDto를 BookSubCategory로 변환
-            BookSubCategory bookSubCategory = bookSubCategoryConverter.toBookSubCategory(bookSubCategoryDto, subCategory);
-
-            // 변환된 BookSubCategory를 리스트에 추가
-            bookSubCategories.add(bookSubCategory);
-        }
-
-        // CategoryDto가 존재하면, 이를 Category 엔티티로 변환
-        Category category = null;
-        if (bookDto.getCategoryDto() != null) {
-            category = categoryConverter.toCategory(bookDto.getCategoryDto());
-        }
-
-        return Book.builder()
-                .id(bookDto.getId())
+        // Book 빌더를 사용하여 BookDto를 Book으로 변환
+        Book book = Book.builder()
                 .bookName(bookDto.getBookName())
                 .author(bookDto.getAuthor())
                 .price(bookDto.getPrice())
-                .fileIdx(bookDto.getFileIdx())
-                .thumb(bookDto.getThumb())
-                .userId(bookDto.getUserId())
-                .likeCnt(bookDto.getLikeCnt())
-                .category(category)
-                .bookSubCategories(bookSubCategories)
-                .blockYn(bookDto.isBlockYn())
                 .blockDt(bookDto.getBlockDt())
+                .thumb(bookDto.getThumb())
+                .likeCnt(bookDto.getLikeCnt())
+                .fileIdx(bookDto.getFileIdx())
                 .saveDt(bookDto.getSaveDt())
-                .updtDt(bookDto.getUpdtDt())
                 .build();
+
+        // CategoryDto -> Category 변환
+        if (bookDto.getCategoryDto() != null) {
+            Category category = categoryConverter.toCategory(bookDto.getCategoryDto());
+            book.setCategory(category);
+        }
+
+        // SubCategoryDtos -> SubCategories 변환
+        if (bookDto.getBookSubCategoryDtos() != null && !bookDto.getBookSubCategoryDtos().isEmpty()) {
+            List<BookSubCategory> bookSubCategories = new ArrayList<>();
+            for (BookSubCategoryDto bookSubCategoryDto : bookDto.getBookSubCategoryDtos()) {
+                if (bookSubCategoryDto.getSubCategoryDto() != null) {
+                    SubCategory subCategory = subCategoryConverter.toSubCategory(bookSubCategoryDto.getSubCategoryDto());
+                    BookSubCategory bookSubCategory = BookSubCategory.builder()
+                            .book(book)
+                            .subCategory(subCategory)
+                            .build();
+                    bookSubCategories.add(bookSubCategory);
+                }
+            }
+            book.setBookSubCategories(bookSubCategories);
+        }
+
+        return book;
     }
+
 }
