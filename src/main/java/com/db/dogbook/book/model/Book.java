@@ -41,6 +41,10 @@ public class Book {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
+    private List<BookSubCategory> bookSubCategories = new ArrayList<>();
+
     //차단
     private boolean blockYn;
 
