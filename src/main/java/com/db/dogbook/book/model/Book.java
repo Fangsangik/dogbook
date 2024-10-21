@@ -1,8 +1,8 @@
 package com.db.dogbook.book.model;
 
 
-import com.db.dogbook.category.domain.BookSubCategory;
 import com.db.dogbook.category.domain.Category;
+import com.db.dogbook.category.domain.SubCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
@@ -41,9 +39,9 @@ public class Book {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<BookSubCategory> bookSubCategories = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategory_id")
+    private SubCategory subCategory;
 
     //차단
     private boolean blockYn;

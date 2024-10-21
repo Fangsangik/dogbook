@@ -1,7 +1,7 @@
 package com.db.dogbook.category.controller;
 
 import com.db.dogbook.category.categoryDto.CategoryDto;
-import com.db.dogbook.category.service.CategoryService;
+import com.db.dogbook.category.service.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    private final CategoryServiceImpl categoryService;
 
 
     @GetMapping("/getAllCategories")

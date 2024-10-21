@@ -22,7 +22,7 @@ public class QSubCategory extends EntityPathBase<SubCategory> {
 
     public static final QSubCategory subCategory = new QSubCategory("subCategory");
 
-    public final ListPath<BookSubCategory, QBookSubCategory> bookSubCategories = this.<BookSubCategory, QBookSubCategory>createList("bookSubCategories", BookSubCategory.class, QBookSubCategory.class, PathInits.DIRECT2);
+    public final ListPath<com.db.dogbook.book.model.Book, com.db.dogbook.book.model.QBook> books = this.<com.db.dogbook.book.model.Book, com.db.dogbook.book.model.QBook>createList("books", com.db.dogbook.book.model.Book.class, com.db.dogbook.book.model.QBook.class, PathInits.DIRECT2);
 
     public final QCategory category;
 

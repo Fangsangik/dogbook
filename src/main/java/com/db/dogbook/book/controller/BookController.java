@@ -1,7 +1,7 @@
 package com.db.dogbook.book.controller;
 
 import com.db.dogbook.book.bookDto.BookDto;
-import com.db.dogbook.book.service.BookService;
+import com.db.dogbook.book.service.BookServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookController {
 
-    private final BookService bookService;
+    private final BookServiceImpl bookServiceImpl;
 
     // GET: 책 목록 페이지로 이동하는 대신, 모든 책 정보를 JSON으로 반환
     @GetMapping("/")
@@ -31,7 +31,7 @@ public class BookController {
             BookDto bookDto = new BookDto();
             bookDto.setBookName(name);
 
-            Page<BookDto> bookPage = bookService.findByBookName(bookDto, pageable);
+            Page<BookDto> bookPage = bookServiceImpl.findByBookName(bookDto, pageable);
             return ResponseEntity.ok(bookPage);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -46,7 +46,7 @@ public class BookController {
             BookDto bookDto = new BookDto();
             bookDto.setAuthor(name);
 
-            Page<BookDto> bookPage = bookService.findByAuthor(bookDto, pageable);
+            Page<BookDto> bookPage = bookServiceImpl.findByAuthor(bookDto, pageable);
             return ResponseEntity.ok(bookPage);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -59,7 +59,7 @@ public class BookController {
             @RequestParam(required = false) String bookName,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice) {
-        return bookService.findBooksByPriceRange(bookName, minPrice, maxPrice);
+        return bookServiceImpl.findBooksByPriceRange(bookName, minPrice, maxPrice);
     }
 
     @GetMapping("/category/books")
@@ -67,14 +67,14 @@ public class BookController {
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String subCategoryName
     ) {
-        return bookService.findByCategoryAndSubCategory(categoryName, subCategoryName);
+        return bookServiceImpl.findByCategoryAndSubCategory(categoryName, subCategoryName);
     }
 
     // POST: 책을 업로드
     @PostMapping("/uploadBook")
     public ResponseEntity<?> uploadBook(@RequestBody BookDto bookDto) {
         try {
-            BookDto createBook = bookService.create(bookDto);
+            BookDto createBook = bookServiceImpl.create(bookDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createBook);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -86,7 +86,7 @@ public class BookController {
     @PostMapping("/updateBook")
     public ResponseEntity<?> updateBook(@RequestBody BookDto bookDto) {
         try {
-            BookDto updatedBook = bookService.update(bookDto);
+            BookDto updatedBook = bookServiceImpl.update(bookDto);
             return ResponseEntity.ok(updatedBook);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -98,7 +98,7 @@ public class BookController {
     @DeleteMapping("/deleteBook")
     public ResponseEntity<?> deleteBook(@RequestParam Long id) {
         try {
-            bookService.deleteById(id);
+            bookServiceImpl.deleteById(id);
             return ResponseEntity.ok("Book deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

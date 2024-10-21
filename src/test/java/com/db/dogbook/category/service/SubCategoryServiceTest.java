@@ -8,32 +8,30 @@ import com.db.dogbook.category.domain.Category;
 import com.db.dogbook.category.domain.SubCategory;
 import com.db.dogbook.category.repository.CategoryRepository;
 import com.db.dogbook.category.repository.SubCategoryRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class SubCategoryServiceTest {
 
     @Autowired
-    private SubCategoryService subCategoryService;
+    private SubCategoryServiceImpl subCategoryServiceImpl;
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
-
-    @Autowired
-    private CategoryService categoryService;
 
     @Autowired
     private CategoryConverter categoryConverter;
@@ -50,30 +48,32 @@ class SubCategoryServiceTest {
         subCategoryRepository.deleteAll();
         categoryRepository.deleteAll();
 
-        // CategoryDto와 SubCategoryDto 객체를 명시적으로 초기화
-        categoryDto = new CategoryDto();  // categoryDto 초기화
-        subCategoryDto = new SubCategoryDto();  // subCategoryDto 초기화
+        // CategoryDto와 SubCategoryDto를 명시적으로 생성 및 초기화
+        categoryDto = CategoryDto.builder()
+                .categoryName("Test Category")
+                .build();
 
-        // categoryDto에 이름 설정
-        categoryDto.setCategoryName("Test Category");
+        subCategoryDto = SubCategoryDto.builder()
+                .subCategoryName("Test Sub Category")
+                .build();
 
-        // 카테고리 저장
-        Category category = categoryRepository.save(
-                Category.builder()
-                        .categoryName(categoryDto.getCategoryName())
-                        .build()
-        );
+        // 카테고리 생성 및 저장
+        Category category = Category.builder()
+                .categoryName(categoryDto.getCategoryName())
+                .subCategories(List.of())
+                .books(List.of())
+                .build();
+        category = categoryRepository.save(category);
 
-        // subCategoryDto에 이름 설정
-        subCategoryDto.setSubCategoryName("Test Sub Category");
+        // 서브 카테고리 생성 및 저장
+        SubCategory subCategory = SubCategory.builder()
+                .category(category)
+                .subCategoryName(subCategoryDto.getSubCategoryName())
+                .books(new ArrayList<>())
+                .build();
+        subCategory = subCategoryRepository.save(subCategory);
 
-        // 서브 카테고리 저장
-        SubCategory subCategory = subCategoryRepository.save(
-                SubCategory.builder()
-                        .category(category)
-                        .subCategoryName(subCategoryDto.getSubCategoryName())
-                        .build()
-        );
+        subCategory.setCategory(category);
 
         // DTO로 변환
         categoryDto = categoryConverter.toCategoryDto(category);
@@ -82,7 +82,7 @@ class SubCategoryServiceTest {
 
     @Test
     void getSubCategoriesByCategoryId() {
-        List<SubCategoryDto> subCategoriesByCategoryId = subCategoryService.getSubCategoriesByCategoryId(categoryDto.getId());
+        List<SubCategoryDto> subCategoriesByCategoryId = subCategoryServiceImpl.getSubCategoriesByCategoryId(categoryDto.getId());
         assertNotNull(subCategoriesByCategoryId);
         assertThat(subCategoriesByCategoryId.size()).isEqualTo(1);
         assertThat(subCategoriesByCategoryId.get(0).getSubCategoryName()).isEqualTo("Test Sub Category");
@@ -91,29 +91,24 @@ class SubCategoryServiceTest {
     @Test
     @Transactional
     void createSubCategory() {
-        SubCategoryDto subCategory = subCategoryService.createSubCategory(subCategoryDto);
+        SubCategoryDto newSubCategory = subCategoryServiceImpl.createSubCategory(subCategoryDto);
 
-        assertNotNull(subCategory);
-        assertEquals("Test Sub Category", subCategory.getSubCategoryName());
-
+        assertNotNull(newSubCategory);
+        assertEquals("Test Sub Category", newSubCategory.getSubCategoryName());
     }
 
     @Test
+    @Transactional
     void assignToCategory() {
-        // SubCategoryDto 생성 및 ID 설정
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setId(1L); // 존재하는 서브 카테고리 ID로 설정
-
-        // CategoryDto 생성 및 ID 설정
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(1L); // 존재하는 카테고리 ID로 설정
-        subCategoryDto.setCategoryDto(categoryDto);
-
-        // Category에 SubCategory를 할당
-        SubCategoryDto assigned = subCategoryService.assignToCategory(subCategoryDto, 1L);
+        // 새로운 서브 카테고리 생성 및 저장
+        createSubCategory();
+        // 저장된 서브카테고리의 ID를 사용하여 카테고리에 할당
+        SubCategoryDto assignedSubCategory = subCategoryServiceImpl.assignToCategory(subCategoryDto, categoryDto.getId());
 
         // 검증 로직
-        assertNotNull(assigned);
-        assertEquals(1L, assigned.getCategoryDto().getId());
+        assertNotNull(assignedSubCategory);
+        assertEquals(categoryDto.getId(), assignedSubCategory.getCategoryDto().getId());
     }
+
 }
+

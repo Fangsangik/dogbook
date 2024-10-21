@@ -1,21 +1,18 @@
 package com.db.dogbook.category.service;
 
-import com.db.dogbook.book.bookDto.BookDto;
+
 import com.db.dogbook.category.categoryDto.CategoryDto;
-import com.db.dogbook.category.categoryDto.SubCategoryDto;
+
 import com.db.dogbook.category.converter.CategoryConverter;
 import com.db.dogbook.category.domain.Category;
 import com.db.dogbook.category.repository.CategoryRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CategoryServiceTest {
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryServiceImpl categoryService;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -33,20 +30,20 @@ class CategoryServiceTest {
     private CategoryConverter categoryConverter;
 
     private CategoryDto categoryDto;
-    private SubCategoryDto subCategoryDto;
-    private BookDto bookDto;
 
     @BeforeEach
     void setUp() {
+        // 데이터베이스를 초기화하여 테스트 간의 충돌 방지
         categoryRepository.deleteAll();
         categoryDto = new CategoryDto();
         categoryDto.setCategoryName("Test Category");
+
+        // 카테고리 생성
         Category category = Category.builder()
                 .categoryName(categoryDto.getCategoryName())
-                .subCategories(new ArrayList<>())
-                .books(new ArrayList<>())
                 .build();
 
+        // 저장 후 DTO로 변환
         categoryDto = categoryConverter.toCategoryDto(categoryRepository.save(category));
     }
 
@@ -76,6 +73,18 @@ class CategoryServiceTest {
     }
 
     @Test
+    @Transactional
+    void testCreateAndFindCategory() {
+        createCategory();
+
+        // 생성된 카테고리 이름으로 검색
+        CategoryDto foundCategory = categoryService.findCategoryByCategoryName(categoryDto.getCategoryName());
+
+        assertNotNull(foundCategory);
+        assertEquals("Test Category", foundCategory.getCategoryName());
+    }
+
+    @Test
     void getAllCategories() {
         createCategory();
         List<CategoryDto> allCategories = categoryService.getAllCategories();
@@ -84,12 +93,9 @@ class CategoryServiceTest {
         assertEquals(1, allCategories.size());
     }
 
-    @Test
-    void findCategoryByName() {
-        createCategory();
-        CategoryDto categoryByCategoryName = categoryService.findCategoryByCategoryName(categoryDto.getCategoryName());
-        assertNotNull(categoryByCategoryName);
-        assertEquals("Test Category", categoryByCategoryName.getCategoryName());
+    @AfterEach
+    void tearDown() {
+        // 각 테스트 후 데이터 정리
+        categoryRepository.deleteAll();
     }
-
 }

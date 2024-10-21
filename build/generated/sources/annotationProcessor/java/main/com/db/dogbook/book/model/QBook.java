@@ -30,8 +30,6 @@ public class QBook extends EntityPathBase<Book> {
 
     public final StringPath bookName = createString("bookName");
 
-    public final ListPath<com.db.dogbook.category.domain.BookSubCategory, com.db.dogbook.category.domain.QBookSubCategory> bookSubCategories = this.<com.db.dogbook.category.domain.BookSubCategory, com.db.dogbook.category.domain.QBookSubCategory>createList("bookSubCategories", com.db.dogbook.category.domain.BookSubCategory.class, com.db.dogbook.category.domain.QBookSubCategory.class, PathInits.DIRECT2);
-
     public final com.db.dogbook.category.domain.QCategory category;
 
     public final NumberPath<Integer> fileIdx = createNumber("fileIdx", Integer.class);
@@ -43,6 +41,8 @@ public class QBook extends EntityPathBase<Book> {
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> saveDt = createDateTime("saveDt", java.time.LocalDateTime.class);
+
+    public final com.db.dogbook.category.domain.QSubCategory subCategory;
 
     public final StringPath thumb = createString("thumb");
 
@@ -69,6 +69,7 @@ public class QBook extends EntityPathBase<Book> {
     public QBook(Class<? extends Book> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.category = inits.isInitialized("category") ? new com.db.dogbook.category.domain.QCategory(forProperty("category")) : null;
+        this.subCategory = inits.isInitialized("subCategory") ? new com.db.dogbook.category.domain.QSubCategory(forProperty("subCategory"), inits.get("subCategory")) : null;
     }
 
 }
