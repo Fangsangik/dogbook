@@ -26,8 +26,8 @@ public class SubCategory {
     private String subCategoryName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;  // `nullable = false` 추가로 무결성 유지
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Builder.Default
     @OneToMany(mappedBy = "subCategory", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

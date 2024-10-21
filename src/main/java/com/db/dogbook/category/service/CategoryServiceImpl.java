@@ -18,7 +18,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryConverter categoryConverter;
 
-
     @Transactional(readOnly = true)
     @Override
     public List<CategoryDto> getAllCategories() {
@@ -80,7 +79,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory = categoryRepository.save(updatedCategory);
         return categoryConverter.toCategoryDto(savedCategory);
     }
-
 
     @Transactional
     @Override

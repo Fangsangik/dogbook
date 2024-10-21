@@ -8,6 +8,6 @@ public interface SubCategoryService {
 
     SubCategoryDto createSubCategory(SubCategoryDto subCategoryDto);
     List<SubCategoryDto> getSubCategoriesByCategoryId(Long categoryId);
-    SubCategoryDto assignToCategory(SubCategoryDto subCategoryDto, Long categoryId);
+    SubCategoryDto assignToCategory(Long subCategoryId, Long categoryId);
 }
 

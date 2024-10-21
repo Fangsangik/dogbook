@@ -13,19 +13,17 @@ public class SubCategoryController {
 
     private final SubCategoryServiceImpl subCategoryServiceImpl;
 
-
     @PostMapping("/create")
     public ResponseEntity<SubCategoryDto> createSubCategory(@RequestBody SubCategoryDto subCategoryDto) {
-
         SubCategoryDto createSubCategory = subCategoryServiceImpl.createSubCategory(subCategoryDto);
         return ResponseEntity.ok().body(createSubCategory);
     }
 
-    @PostMapping("/{subCategoryId}/assginToCategory/{categoryId}")
-    public ResponseEntity<SubCategoryDto> assignSubCategoryToCategory
-            (@RequestBody SubCategoryDto subCategoryDto,
-             @PathVariable Long categoryId) {
-        SubCategoryDto assignToCategory = subCategoryServiceImpl.assignToCategory(subCategoryDto, categoryId);
+    @PostMapping("/{subCategoryId}/assignToCategory/{categoryId}") // 오타 수정
+    public ResponseEntity<SubCategoryDto> assignSubCategoryToCategory(
+            @PathVariable Long subCategoryId,
+            @PathVariable Long categoryId) {
+        SubCategoryDto assignToCategory = subCategoryServiceImpl.assignToCategory(subCategoryId, categoryId);
         return ResponseEntity.ok().body(assignToCategory);
     }
 }

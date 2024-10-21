@@ -28,6 +28,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
+        // 해당 카테고리에 속한 서브 카테고리 목록 조회
         List<SubCategory> subCategories = subCategoryRepository.findByCategoryId(category.getId());
 
         return subCategories.stream()
@@ -38,6 +39,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     @Transactional
     public SubCategoryDto createSubCategory(SubCategoryDto subCategoryDto) {
+        // SubCategory 변환 및 저장
         SubCategory subCategory = subCategoryConverter.toSubCategory(subCategoryDto);
         SubCategory savedSubCategory = subCategoryRepository.save(subCategory);
         return subCategoryConverter.toSubCategoryDto(savedSubCategory);
@@ -45,21 +47,24 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     @Transactional
-    public SubCategoryDto assignToCategory(SubCategoryDto subCategoryDto, Long categoryId) {
-        // SubCategoryDto의 ID가 null인 경우 예외 처리
-        if (subCategoryDto.getId() == null) {
+    public SubCategoryDto assignToCategory(Long subCategoryId, Long categoryId) {
+        // SubCategory ID 검증
+        if (subCategoryId == null) {
             throw new IllegalArgumentException("SubCategory ID must not be null");
         }
 
-        // Category 확인
+        // 카테고리 확인
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
-        SubCategory subCategory = subCategoryRepository.findById(subCategoryDto.getId())
-                .orElseThrow(() -> new RuntimeException("SubCategory not found"));
+        // SubCategory 조회
+        SubCategory subCategory = subCategoryRepository.findById(subCategoryId)
+                .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
 
-        // SubCategory에 Category 매핑
-        subCategory.setCategory(category);
+        // 필요할 때만 SubCategory에 Category 매핑
+        if (!category.equals(subCategory.getCategory())) {
+            subCategory.setCategory(category);
+        }
 
         // 업데이트된 SubCategory 저장
         SubCategory updatedSubCategory = subCategoryRepository.save(subCategory);

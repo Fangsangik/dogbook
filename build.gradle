@@ -39,6 +39,11 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+	// 유효성 검사 (Bean Validation)
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// 테스트에 필요한 의존성 (테스트 시 유효성 검사 적용을 위해 필요)
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

@@ -103,7 +103,7 @@ class SubCategoryServiceTest {
         // 새로운 서브 카테고리 생성 및 저장
         createSubCategory();
         // 저장된 서브카테고리의 ID를 사용하여 카테고리에 할당
-        SubCategoryDto assignedSubCategory = subCategoryServiceImpl.assignToCategory(subCategoryDto, categoryDto.getId());
+        SubCategoryDto assignedSubCategory = subCategoryServiceImpl.assignToCategory(subCategoryDto.getId(), categoryDto.getId());
 
         // 검증 로직
         assertNotNull(assignedSubCategory);
