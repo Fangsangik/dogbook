@@ -146,3 +146,9 @@ HELP.md
 .gradle
 build/
 .DS_Store
+
+*.bin
+*.lock
+
+# database info
+database.properties
